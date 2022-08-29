@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: nginx
+  name: nginx
+spec:
+  ports:
+    - port: 80
+      name: http
+      targetPort: 80
+    - port: 8080
+      name: http-tomcat
+      targetPort: 8080
+  selector:
+    service: tomcat-nginx
+status:
+  loadBalancer: {}

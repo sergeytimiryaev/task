@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: tomcat-nginx
+  name: tomcat-nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: tomcat-nginx
+  template:
+    metadata:
+      labels:
+        service: tomcat-nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:latest
+          ports:
+            - name: http
+              containerPort: 80
+          resources: {}
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+        - env:
+            - name: JDBC_PASS
+              value: nkUKXaBY{Yws
+            - name: JDBC_URL
+              value: jdbc:mysql://db.svc:3306/javatest?connectTimeout=0&amp;socketTimeout=0&amp;autoReconnect=true
+            - name: JDBC_USER
+              value: example_db_user
+            - name: VIRTUAL_HOST
+              value: localhost
+            - name: VIRTUAL_PORT
+              value: "8080"
+          image: sergeytim/task:tomcat
+          ports:
+            - name: http-tomcat
+              containerPort: 80
+          name: tomcat
+          resources: {}
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: nginx-config
+      restartPolicy: Always
+status: {}

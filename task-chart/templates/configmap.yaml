@@ -1,0 +1,165 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+data:
+  nginx.conf: |-
+    user  nginx;
+    worker_processes  auto;
+    pid        /var/run/nginx.pid;
+    events {
+        worker_connections  10240;
+    }
+    http {
+      types {
+          text/html                                        html htm shtml;
+          text/css                                         css;
+          text/xml                                         xml;
+          image/gif                                        gif;
+          image/jpeg                                       jpeg jpg;
+          application/javascript                           js;
+          application/atom+xml                             atom;
+          application/rss+xml                              rss;
+
+          text/mathml                                      mml;
+          text/plain                                       txt;
+          text/vnd.sun.j2me.app-descriptor                 jad;
+          text/vnd.wap.wml                                 wml;
+          text/x-component                                 htc;
+
+          image/avif                                       avif;
+          image/png                                        png;
+          image/svg+xml                                    svg svgz;
+          image/tiff                                       tif tiff;
+          image/vnd.wap.wbmp                               wbmp;
+          image/webp                                       webp;
+          image/x-icon                                     ico;
+          image/x-jng                                      jng;
+          image/x-ms-bmp                                   bmp;
+
+          font/woff                                        woff;
+          font/woff2                                       woff2;
+          application/java-archive                         jar war ear;
+          application/json                                 json;
+          application/mac-binhex40                         hqx;
+          application/msword                               doc;
+          application/pdf                                  pdf;
+          application/postscript                           ps eps ai;
+          application/rtf                                  rtf;
+          application/vnd.apple.mpegurl                    m3u8;
+          application/vnd.google-earth.kml+xml             kml;
+          application/vnd.google-earth.kmz                 kmz;
+          application/vnd.ms-excel                         xls;
+          application/vnd.ms-fontobject                    eot;
+          application/vnd.ms-powerpoint                    ppt;
+          application/vnd.oasis.opendocument.graphics      odg;
+          application/vnd.oasis.opendocument.presentation  odp;
+          application/vnd.oasis.opendocument.spreadsheet   ods;
+          application/vnd.oasis.opendocument.text          odt;
+          application/vnd.openxmlformats-officedocument.presentationml.presentation  pptx;
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet  xlsx;
+          application/vnd.openxmlformats-officedocument.wordprocessingml.document  docx;
+          application/vnd.wap.wmlc                         wmlc;
+          application/wasm                                 wasm;
+          application/x-7z-compressed                      7z;
+          application/x-cocoa                              cco;
+          application/x-java-archive-diff                  jardiff;
+          application/x-java-jnlp-file                     jnlp;
+          application/x-makeself                           run;
+          application/x-perl                               pl pm;
+          application/x-pilot                              prc pdb;
+          application/x-rar-compressed                     rar;
+          application/x-redhat-package-manager             rpm;
+          application/x-sea                                sea;
+          application/x-shockwave-flash                    swf;
+          application/x-stuffit                            sit;
+          application/x-tcl                                tcl tk;
+          application/x-x509-ca-cert                       der pem crt;
+          application/x-xpinstall                          xpi;
+          application/xhtml+xml                            xhtml;
+          application/xspf+xml                             xspf;
+          application/zip                                  zip;
+
+          application/octet-stream                         bin exe dll;
+          application/octet-stream                         deb;
+          application/octet-stream                         dmg;
+          application/octet-stream                         iso img;
+          application/octet-stream                         msi msp msm;
+
+          audio/midi                                       mid midi kar;
+          audio/mpeg                                       mp3;
+          audio/ogg                                        ogg;
+          audio/x-m4a                                      m4a;
+          audio/x-realaudio                                ra;
+
+          video/3gpp                                       3gpp 3gp;
+          video/mp2t                                       ts;
+          video/mp4                                        mp4;
+          video/mpeg                                       mpeg mpg;
+          video/quicktime                                  mov;
+          video/webm                                       webm;
+          video/x-flv                                      flv;
+          video/x-m4v                                      m4v;
+          video/x-mng                                      mng;
+          video/x-ms-asf                                   asx asf;
+          video/x-ms-wmv                                   wmv;
+          video/x-msvideo                                  avi;
+      }
+
+      default_type  application/octet-stream;
+      sendfile        on;
+      #tcp_nopush     on;
+      keepalive_timeout  65;
+      #gzip  on;
+
+      map $http_x_forwarded_proto $proxy_x_forwarded_proto {
+        default $http_x_forwarded_proto;
+        ''      $scheme;
+      }
+      # If we receive X-Forwarded-Port, pass it through; otherwise, pass along the
+      # server port the client connected to
+      map $http_x_forwarded_port $proxy_x_forwarded_port {
+        default $http_x_forwarded_port;
+        ''      $server_port;
+      }
+      # If we receive Upgrade, set Connection to "upgrade"; otherwise, delete any
+      # Connection header that may have been passed to this server
+      map $http_upgrade $proxy_connection {
+        default upgrade;
+        '' close;
+      }
+      # Apply fix for very long server names
+      server_names_hash_bucket_size 128;
+      # Default dhparam
+      # Set appropriate X-Forwarded-Ssl header based on $proxy_x_forwarded_proto
+      map $proxy_x_forwarded_proto $proxy_x_forwarded_ssl {
+        default off;
+        https on;
+      }
+      gzip_types text/plain text/css application/javascript application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+      access_log off;
+                      ssl_protocols TLSv1.2 TLSv1.3;
+                      ssl_ciphers 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384';
+                      ssl_prefer_server_ciphers off;
+      error_log /dev/stderr;
+      # HTTP 1.1 support
+      proxy_http_version 1.1;
+      proxy_buffering off;
+      proxy_set_header Host $http_host;
+      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Connection $proxy_connection;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto $proxy_x_forwarded_proto;
+      proxy_set_header X-Forwarded-Ssl $proxy_x_forwarded_ssl;
+      proxy_set_header X-Forwarded-Port $proxy_x_forwarded_port;
+      proxy_set_header X-Original-URI $request_uri;
+      # Mitigate httpoxy attack (see README for details)
+      proxy_set_header Proxy "";
+      server {
+        listen 0.0.0.0:80 ;
+        location / {
+          proxy_pass http://localhost:8080/example-webapp/;
+        }
+      }
+    }
