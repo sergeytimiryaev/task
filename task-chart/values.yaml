@@ -1,1 +1,25 @@
-#Placeholder
+nginx:
+  name: tomcat-nginx
+  service:
+    name: nginx
+    targetPort: 8080
+    port: 80
+  replicas: 1
+  containers:
+    name: nginx
+    image: nginx:latest
+    port: http
+  volumeMounts:
+    name: nginx-config
+    mountPath: /etc/nginx/nginx.conf
+    subPath: nginx.conf
+tomcat:
+  image: sergeytim/task:tomcat
+  port: http-tomcat
+  name: tomcat
+db:
+  name: db
+  port: 3306
+  replicas: 1
+  image: sergeytim/task:mysql
+  

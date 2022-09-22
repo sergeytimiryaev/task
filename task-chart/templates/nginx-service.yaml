@@ -2,17 +2,17 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    service: nginx
-  name: nginx
+    service: {{ .Values.nginx.service.name }}
+  name: {{ .Values.nginx.service.name }}
 spec:
   ports:
-    - port: 80
-      name: http
-      targetPort: 80
-    - port: 8080
-      name: http-tomcat
-      targetPort: 8080
+    - port: {{ .Values.nginx.service.port }}
+      name: {{ .Values.nginx.containers.port }}
+      targetPort: {{ .Values.nginx.service.port }}
+    - port: {{ .Values.nginx.service.targetPort }}
+      name: {{ .Values.tomcat.port }}
+      targetPort: {{ .Values.nginx.service.targetPort }}
   selector:
-    service: tomcat-nginx
+    service: {{ .Values.nginx.name }}
 status:
   loadBalancer: {}

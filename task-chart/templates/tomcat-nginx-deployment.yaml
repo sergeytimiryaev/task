@@ -2,29 +2,29 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    service: tomcat-nginx
-  name: tomcat-nginx
+    service: {{ .Values.nginx.name }}
+  name: {{ .Values.nginx.name }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.nginx.replicas }}
   selector:
     matchLabels:
-      service: tomcat-nginx
+      service: {{ .Values.nginx.name }}
   template:
     metadata:
       labels:
-        service: tomcat-nginx
+        service: {{ .Values.nginx.name }}
     spec:
       containers:
-        - name: nginx
-          image: nginx:latest
+        - name: {{ .Values.nginx.containers.name }}
+          image: {{ .Values.nginx.containers.image }}
           ports:
-            - name: http
-              containerPort: 80
+            - name: {{ .Values.nginx.containers.port }}
+              containerPort: {{ .Values.nginx.service.port }}
           resources: {}
           volumeMounts:
-            - name: nginx-config
-              mountPath: /etc/nginx/nginx.conf
-              subPath: nginx.conf
+            - name: {{ .Values.nginx.volumeMounts.name }}
+              mountPath: {{ .Values.nginx.volumeMounts.mountPath }}
+              subPath: {{ .Values.nginx.volumeMounts.subPath }}
         - env:
             - name: JDBC_PASS
               value: nkUKXaBY{Yws
@@ -36,11 +36,11 @@ spec:
               value: localhost
             - name: VIRTUAL_PORT
               value: "8080"
-          image: sergeytim/task:tomcat
+          image: {{ .Values.tomcat.image }}
           ports:
-            - name: http-tomcat
-              containerPort: 80
-          name: tomcat
+            - name: {{ .Values.tomcat.port }}
+              containerPort: {{ .Values.nginx.service.port }}
+          name: {{ .Values.tomcat.name }}
           resources: {}
       volumes:
         - name: nginx-config

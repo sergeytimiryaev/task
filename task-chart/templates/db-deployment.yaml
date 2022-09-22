@@ -2,18 +2,18 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    service: db
-  name: db
+    service: {{ .Values.db.name }}
+  name: {{ .Values.db.name }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.db.replicas }}
   selector:
     matchLabels:
-      service: db
+      service: {{ .Values.db.name }}
   strategy: {}
   template:
     metadata:
       labels:
-        service: db
+        service: {{ .Values.db.name }}
     spec:
       containers:
         - env:
@@ -25,10 +25,10 @@ spec:
               value: root
             - name: MYSQL_USER
               value: example_db_user
-          image: sergeytim/task:mysql
-          name: db
+          image: {{ .Values.db.image }}
+          name: {{ .Values.db.name }}
           ports:
-            - containerPort: 3306
+            - containerPort: {{ .Values.db.port }}
           resources: {}
       restartPolicy: Always
 status: {}
